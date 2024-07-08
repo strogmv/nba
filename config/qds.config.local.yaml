@@ -1,0 +1,5 @@
+nats:
+  host: "0.0.0.0:4222"
+
+postgres: "postgres://root:kj~GoEi~GoEi@localhost:5432/db?sslmode=disable"
+

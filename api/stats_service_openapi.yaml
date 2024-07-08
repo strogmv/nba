@@ -1,0 +1,155 @@
+openapi: 3.0.0
+info:
+  title: NBA Player Statistics API - Stats Service
+  version: 1.0.0
+servers:
+  - url: http://localhost:8081
+    description: Stats Service
+paths:
+  /add_team:
+    post:
+      summary: Add a new team
+      requestBody:
+        description: Team object that needs to be added
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Team'
+      responses:
+        '201':
+          description: Team created
+        '400':
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /add_player:
+    post:
+      summary: Add a new player
+      requestBody:
+        description: Player object that needs to be added
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Player'
+      responses:
+        '201':
+          description: Player created
+        '400':
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /add_stat:
+    post:
+      summary: Add a new game stat for a player
+      requestBody:
+        description: Game stat object that needs to be added
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Stat'
+      responses:
+        '201':
+          description: Stat created
+        '400':
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+components:
+  schemas:
+    Team:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          example: Lakers
+    Player:
+      type: object
+      required:
+        - name
+        - team_id
+      properties:
+        name:
+          type: string
+          example: LeBron James
+        team_id:
+          type: integer
+          example: 1
+    Stat:
+      type: object
+      required:
+        - player_id
+        - points
+        - rebounds
+        - assists
+        - steals
+        - blocks
+        - fouls
+        - turnovers
+        - minutes_played
+      properties:
+        player_id:
+          type: integer
+          example: 1
+        points:
+          type: integer
+          example: 30
+        rebounds:
+          type: integer
+          example: 10
+        assists:
+          type: integer
+          example: 5
+        steals:
+          type: integer
+          example: 2
+        blocks:
+          type: integer
+          example: 1
+        fouls:
+          type: integer
+          example: 3
+        turnovers:
+          type: integer
+          example: 2
+        minutes_played:
+          type: number
+          format: float
+          example: 35.5
+    ErrorResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: An error occurred
+        statusCode:
+          type: integer
+          example: 404

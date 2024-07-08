@@ -1,0 +1,7 @@
+package: aggregateservice
+generate:
+  echo-server: true
+  strict-server: true
+  models: true
+  embedded-spec: true
+output: aggregate.gen.go

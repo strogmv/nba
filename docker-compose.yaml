@@ -1,0 +1,123 @@
+version: "3.8"
+
+services:
+  nats:
+    image: nats
+    expose:
+      - "4222"
+    ports:
+      - "4222:4222"
+    hostname: nats-server
+
+  postgres:
+    image: postgres:11
+    restart: on-failure
+    volumes:
+      - ./docker/postgres/postgresql.conf:/var/lib/postgresql/data/postgresql.conf
+      - ./sql/:/docker-entrypoint-initdb.d/
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_DB: db
+      POSTGRES_PASSWORD: kj~GoEi~GoEi
+      PGDATA: /var/lib/pgsql/data/
+
+  migration:
+    container_name: migrator
+    depends_on:
+      postgres:
+        condition: service_started
+    image: migrate/migrate:v4.17.1
+    working_dir: /game-task-main
+    volumes:
+      - ./migrations:/migrations
+    command: [ "-path", "/migrations", "-database",  "postgres://root:kj~GoEi~GoEi@postgres:5432/db?sslmode=disable", "up" ]
+
+  dependent:
+    container_name: dependent
+    depends_on: &dependent
+      migration:
+        condition: service_completed_successfully
+    image: busybox
+    volumes: &dependent-volumes
+      - ./:/qds/
+      - server_go:/go/
+      - $GOPATH/pkg/mod/cache:/go/pkg/mod/cache
+
+
+  dependent2:
+    container_name: dependent2
+    image: busybox
+    volumes: &dependent-volumes2
+      - ./:/aggregate/
+      - server_go:/go/
+      - $GOPATH/pkg/mod/cache:/go/pkg/mod/cache
+
+  dependent3:
+    container_name: dependent3
+    image: busybox
+    volumes: &dependent-volumes3
+      - ./:/stats/
+      - server_go:/go/
+      - $GOPATH/pkg/mod/cache:/go/pkg/mod/cache
+
+  qds:
+    container_name: qds
+    image: golang:1.22
+    depends_on:
+      nats:
+        condition: service_started
+    command:
+      - go
+      - run
+      - cmd/qds/main.go
+    environment:
+      - "CONFIG_PATH=/qds/config/qds.config.docker.yaml"
+    working_dir: /qds
+    volumes: *dependent-volumes
+
+
+  aggregate:
+    container_name: aggregate
+    image: golang:1.22
+    command:
+      - go
+      - run
+      - cmd/aggregate/main.go
+    environment:
+      - "CONFIG_PATH=/aggregate/config/aggregate.config.docker.yaml"
+    ports:
+      - "8080:8080"
+    working_dir: /aggregate
+    volumes: *dependent-volumes2
+
+  stats:
+    container_name:  stats
+    image: golang:1.22
+    command:
+      - go
+      - run
+      - cmd/stats/main.go
+    environment:
+      - "CONFIG_PATH=/stats/config/stats.config.docker.yaml"
+    ports:
+      - "8081:8081"
+    working_dir: /stats
+    volumes: *dependent-volumes3
+
+  tester:
+    container_name: tester
+    image: golang:1.22
+    depends_on: *dependent
+    command:
+      - go
+      - test
+      - ./test/...
+    environment:
+      - "CONFIG_PATH=/aggregate/config/aggregate.qds.stats.config.docker.yaml"
+    working_dir: /api
+    volumes: *dependent-volumes
+
+volumes:
+  server_go:

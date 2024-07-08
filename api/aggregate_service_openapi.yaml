@@ -1,0 +1,189 @@
+openapi: 3.0.0
+info:
+  title: NBA Player Statistics API
+  version: 1.0.0
+  description: This is an API to get NBA player statistics.
+servers:
+  - url: http://localhost:8081
+paths:
+  /player_average:
+    get:
+      summary: Get average statistics of all players
+      description: Get average statistics of all players for the season
+      tags:
+        - player
+      responses:
+        '200':
+          description: A list of player average statistics
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PlayerAverage'
+  /team_average:
+    get:
+      summary: Get average statistics of all teams
+      description: Get average statistics of all teams for the season
+      tags:
+        - team
+      responses:
+        '200':
+          description: A list of team average statistics
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TeamAverage'
+  /player_average/{id}:
+    get:
+      summary: Get average statistics of a player by ID
+      description: Get average statistics of a player for the season by player ID
+      tags:
+        - player
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '200':
+          description: Average statistics of the specified player
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PlayerAverage'
+        '400':
+          description: Invalid player ID
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Player not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /team_average/{id}:
+    get:
+      summary: Get average statistics of a team by ID
+      description: Get average statistics of a team for the season by team ID
+      tags:
+        - team
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '200':
+          description: Average statistics of the specified team
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TeamAverage'
+        '400':
+          description: Invalid team_id
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Team not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+components:
+  schemas:
+    PlayerAverage:
+      type: object
+      properties:
+        player_id:
+          type: integer
+          example: 1
+        points:
+          type: number
+          format: float
+          example: 25.6
+        rebounds:
+          type: number
+          format: float
+          example: 8.4
+        assists:
+          type: number
+          format: float
+          example: 7.2
+        steals:
+          type: number
+          format: float
+          example: 1.5
+        blocks:
+          type: number
+          format: float
+          example: 0.7
+        fouls:
+          type: number
+          format: float
+          example: 2.3
+        turnovers:
+          type: number
+          format: float
+          example: 3.1
+        minutes_played:
+          type: number
+          format: float
+          example: 34.5
+    TeamAverage:
+      type: object
+      properties:
+        team_id:
+          type: integer
+          example: 1
+        points:
+          type: number
+          format: float
+          example: 102.4
+        rebounds:
+          type: number
+          format: float
+          example: 44.7
+        assists:
+          type: number
+          format: float
+          example: 25.3
+        steals:
+          type: number
+          format: float
+          example: 8.1
+        blocks:
+          type: number
+          format: float
+          example: 4.3
+        fouls:
+          type: number
+          format: float
+          example: 18.2
+        turnovers:
+          type: number
+          format: float
+          example: 14.9
+        minutes_played:
+          type: number
+          format: float
+          example: 240.0
+    ErrorResponse:
+          type: object
+          properties:
+            message:
+              type: string
+              example: An error occurred
+            statusCode:
+              type: integer
+              example: 404

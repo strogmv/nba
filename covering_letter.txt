@@ -1,0 +1,62 @@
+1. Microservice Architecture
+
+Choice: Microservice Architecture over Monolithic Architecture
+
+Reason:
+
+    Scalability: Microservices allow individual components of the application to be scaled independently based on demand. For example, if the statistics recording service experiences higher load than the aggregation service, we can scale it independently without affecting other services.
+    Fault Isolation: Failures in one microservice do not necessarily bring down the entire system. This increases the overall reliability of the application.
+    Technology Flexibility: Different microservices can be written in different languages and technologies based on their specific requirements. This flexibility can lead to better performance and maintainability.
+
+2. Relational Database
+
+Choice: PostgreSQL (Relational Database) over NoSQL Database
+
+Reason:
+
+    ACID Compliance: PostgreSQL ensures strong transactional guarantees, which is essential for the integrity of statistical data.
+    Structured Data: The data model for player and game statistics is highly structured and relational, which aligns well with a relational database.
+    SQL Capabilities: PostgreSQL provides powerful SQL capabilities for aggregating and querying data, which simplifies the implementation of the required statistics calculations.
+
+3. Docker and Kubernetes
+
+Choice: Docker and Kubernetes over Traditional Deployment
+
+Reason:
+
+    Containerization: Docker ensures that the application runs consistently across different environments (development, testing, production) by packaging the application and its dependencies into a container.
+    Orchestration: Kubernetes provides powerful orchestration capabilities, allowing for automated deployment, scaling, and management of containerized applications. It ensures high availability and efficient resource utilization.
+    Microservices Management: Kubernetes is well-suited for managing microservices, providing features like service discovery, load balancing, and automated rollouts and rollbacks.
+
+4. Golang for Implementation
+
+Choice: Golang over Java or Other Languages
+
+Reason:
+
+    Performance: Golang is known for its high performance and efficient memory usage, which is beneficial for a high-throughput system that handles numerous concurrent requests.
+    Concurrency: Golang has built-in support for concurrency with goroutines, making it easier to write concurrent and parallel programs.
+    Simplicity and Efficiency: Golang's simplicity and minimalistic design lead to faster development cycles and easier maintenance.
+
+5. RESTful API
+
+Choice: RESTful API over GraphQL
+
+Reason:
+
+    Simplicity: RESTful APIs are straightforward to implement and consume. They are well-suited for CRUD operations and are widely adopted and understood.
+    Caching: RESTful APIs can leverage HTTP caching mechanisms to improve performance.
+    Statelessness: REST APIs are stateless, which simplifies the server design and improves scalability.
+
+6. Validation Logic in Service
+
+Choice: Implementing Validation Logic in StatsService
+
+Reason:
+
+    Data Integrity: Ensuring that the input data adheres to the required constraints (e.g., positive integers for points, maximum of 6 for fouls) before it is stored in the database helps maintain data integrity.
+    Error Handling: Immediate feedback can be provided to the client if the input data is invalid, improving the overall user experience and preventing bad data from being processed further.
+
+Summary
+
+This design leverages the strengths of microservice architecture, relational databases, and modern container orchestration tools to create a scalable, maintainable, and high-performance system for managing and aggregating NBA player statistics. The use of Golang ensures efficient and straightforward implementation, while RESTful APIs provide a simple and robust interface for interacting with the system.
