@@ -8,7 +8,7 @@ To run the server, you can use the command below. It runs all dependencies (post
 and applies postgres migrations
 
 ```bash
-make run-aggregate
+docker compose up
 ```
 
 ## How to test it?
